@@ -274,6 +274,7 @@ else
 
 acquaMeter=(mouseX/width)*100;
 acquaMeter=constrain(acquaMeter, 0,100);
+var scalaAcqua=dimensioneNormalizzata(0.5781);
 if(acquaMeter<20)
   {
    
@@ -283,31 +284,31 @@ if(acquaMeter<20)
   {
     push();
     tint(255,map(acquaMeter,20,40,0,255));
-    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],xNormalizzata(0.5),yNormalizzata(0.5),scalaAcqua,scalaAcqua);
     pop();
   }
   if(acquaMeter>=40 && acquaMeter<60)
   {
-    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     push();
     tint(255,map(acquaMeter,40,60,0,255));
-    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     pop();
   }
   if(acquaMeter>=60 && acquaMeter<80)
   {
-    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     push();
     tint(255,map(acquaMeter,60,80,0,255));
-    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     pop();
   }
   if(acquaMeter>=80 && acquaMeter<=100)
   {
-    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     push();
     tint(255,map(acquaMeter,80,100,0,255));
-    image(spriteAcqua[3].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[3].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
     pop();
   }
 
