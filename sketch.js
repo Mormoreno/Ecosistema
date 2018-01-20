@@ -123,7 +123,7 @@ function preload()
       var pezzoAcqua=new PezzoAcqua();
       for(var j=0;j<numeroTransizioniGhiaccio;j++)
       {
-        pezzoAcqua.ghiacciato.push(loadImage("assets/Acqua/Acqua_"+i+"_"+j+".png"));
+        pezzoAcqua.ghiacciato.push(loadImage("assets/AcquaCroppata/Acqua_"+i+"_"+j+".png"));
       }
       spriteAcqua.push(pezzoAcqua);
       pezzoAcqua=null;
