@@ -1,4 +1,6 @@
 
+p5.disableFriendlyErrors = true;
+
 var mobile=false;
 var desktop=true;
 
@@ -95,6 +97,7 @@ var velocitaAnimazioneProva=10;
 
 var inizializzato=false;
 var timerInizializzato=0;
+var currentFPS=0;
 
 function preload()
 {
@@ -350,23 +353,42 @@ pop();
 if(debug)
   {
     fill(255);
+    
+
     var mouseXnormalizzata=(mouseX-((width-dimensioneMinore)/2))/dimensioneMinore;
     var mouseYnormalizzata=(mouseY-((height-dimensioneMinore)/2))/dimensioneMinore;
     text("X="+mouseXnormalizzata.toFixed(2)+" Y="+mouseYnormalizzata.toFixed(2), mouseX, mouseY);
 
-    text("AcquaMeter= "+acquaMeter.toFixed(2),10,10);
-    text("ShakeMeter= "+shakeMeter.toFixed(2),10,30);
-    text("Temperatura= "+temperaturaMeter.toFixed(2),10,50);
-    text("LuminositaWebcam= "+luminositaWebcam.toFixed(2),10,70);
-    text("Orologio= "+orologioMeter.toFixed(2),10,90);
-    text("Microfono= "+volumeMicrofono.toFixed(2),10,110);
-    text("Soffi= "+numSoffi,10,130);
+    var interlinea=10;
+   
+    if(frameCount%15==0)
+    currentFPS=frameRate().toFixed();
+
+    text("FPS= "+currentFPS,10,interlinea);
+    interlinea+=20;
+    text("AcquaMeter= "+acquaMeter.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("ShakeMeter= "+shakeMeter.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("Temperatura= "+temperaturaMeter.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("LuminositaWebcam= "+luminositaWebcam.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("Orologio= "+orologioMeter.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("Microfono= "+volumeMicrofono.toFixed(2),10,interlinea);
+    interlinea+=20;
+    text("Soffi= "+numSoffi,10,interlinea);
     
   }
 
 }
 
-
+function IndicatoreTemperatura(x,y)
+{
+  this.x=x;
+  this.y=y;
+}
 
 function PezzoAcqua()
 {
