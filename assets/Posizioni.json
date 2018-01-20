@@ -3,7 +3,7 @@
             [
                 {
                 "tipoCreatura":"albero",
-                "x":0.38,
+                "x":0.4,
                 "y":0.44,
                 "habitat":"spiaggia"
                 },
@@ -13,6 +13,13 @@
                 "x":0.42,
                 "y":0.47,
                 "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.39,
+                    "y":0.46,
+                    "habitat":"spiaggia"
                 },
 
                 {
@@ -35,6 +42,10 @@
                 "y":0.55,
                 "habitat":"spiaggia"
                 }
+
+               
+
+                
 
 
             ]

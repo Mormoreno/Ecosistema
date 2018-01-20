@@ -4,6 +4,7 @@ var desktop=true;
 
 var debug=true;
 var lowRes=false;
+var targetFrameRate=144;
 
 //BOUNDING
 var spriteBoundingBox;
@@ -16,6 +17,9 @@ var spriteMontagna;
 var spriteAcqua=Array();
 var spriteGhiaccio=Array();
 var spriteAnimazioneProva=Array();
+
+var numeroTransizioniGhiaccio=5;
+var livelloGhiaccio=0;
 
 //ANIMALI
 var spriteVolpe=Array();
@@ -107,9 +111,20 @@ function preload()
 
   spriteNuvolettaFumetto=loadImage("assets/NuvolettaFumetto.png");
 
+  /*for(var i=0;i<=3;i++)
+  spriteAcqua.push(loadImage("assets/Acqua_"+i+".png"));*/
+
   for(var i=0;i<=3;i++)
-  spriteAcqua.push(loadImage("assets/Acqua_"+i+".png"));
-  
+    {
+      var pezzoAcqua=new PezzoAcqua();
+      for(var j=0;j<numeroTransizioniGhiaccio;j++)
+      {
+        pezzoAcqua.ghiacciato.push(loadImage("assets/Acqua/Acqua_"+i+"_"+j+".png"));
+      }
+      spriteAcqua.push(pezzoAcqua);
+      pezzoAcqua=null;
+
+    }
 
   for(var i=0;i<=3;i++)
   spriteGhiaccio.push(loadImage("assets/Ghiaccio_"+i+".png"));
@@ -138,7 +153,7 @@ function setup() {
     createCanvas(windowWidth,windowHeight);
     setDimensioneMinore();
     imageMode(CENTER);
-    frameRate(60);
+    frameRate(targetFrameRate);
 
     //INIZIALIZZA WEBCAM
     catturaWebcam=createCapture(VIDEO);
@@ -165,7 +180,8 @@ function setup() {
     if(lowRes)
     {
       for(var i=0;i<=3;i++)
-      spriteAcqua[i].resize(50,50);
+      for(var j=0;j<numeroTransizioniGhiaccio;j++)
+      spriteAcqua[i].ghiacciato[j].resize(50,50);
 
       spriteNuvolettaFumetto.resize(50,50);
 
@@ -247,7 +263,7 @@ else
   acquaMeter-=deltaTime*velocitaAcquaScende;
 }
 
-//acquaMeter=(mouseX/width)*100;
+acquaMeter=(mouseX/width)*100;
 acquaMeter=constrain(acquaMeter, 0,100);
 if(acquaMeter<20)
   {
@@ -258,34 +274,34 @@ if(acquaMeter<20)
   {
     push();
     tint(255,map(acquaMeter,20,40,0,255));
-    image(spriteAcqua[0],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
-   // image(spriteGhiaccio[0],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     pop();
   }
   if(acquaMeter>=40 && acquaMeter<60)
   {
-    image(spriteAcqua[0],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     push();
     tint(255,map(acquaMeter,40,60,0,255));
-    image(spriteAcqua[1],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     pop();
   }
   if(acquaMeter>=60 && acquaMeter<80)
   {
-    image(spriteAcqua[1],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     push();
     tint(255,map(acquaMeter,60,80,0,255));
-    image(spriteAcqua[2],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     pop();
   }
   if(acquaMeter>=80 && acquaMeter<=100)
   {
-    image(spriteAcqua[2],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     push();
     tint(255,map(acquaMeter,80,100,0,255));
-    image(spriteAcqua[3],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
+    image(spriteAcqua[3].ghiacciato[livelloGhiaccio],width*.5,height*.5, dimensioneMinore,dimensioneMinore);
     pop();
   }
+
 
  
   for(var i=0;i<alberi.length;i++)
@@ -342,6 +358,13 @@ if(debug)
     
   }
 
+}
+
+
+
+function PezzoAcqua()
+{
+  this.ghiacciato=Array();
 }
 
 function Posizione(x,y)
@@ -426,7 +449,7 @@ function Creatura(tipoCreatura,x,y,habitat)
   switch(tipoCreatura)
   {
     case "albero":
-                  this.size=0.03;
+                  this.size=0.08;
                   this.tipoAlbero=parseInt(random(0,spriteAlberi.length));
                   this.spriteCreatura=spriteAlberi[this.tipoAlbero];
                   
@@ -435,6 +458,11 @@ function Creatura(tipoCreatura,x,y,habitat)
     case "volpe":
                 this.size=0.05;
                 this.spriteCreatura=spriteVolpe[0];
+    break;
+
+    default:
+    break;
+    
 
                 
   }
@@ -465,6 +493,14 @@ function Creatura(tipoCreatura,x,y,habitat)
       if(acquaMeter<20)
       {
         this.fumetto("sete");
+      }
+    }
+    else
+    if(this.tipoCreatura=="volpe")
+    {
+      if(temperaturaMeter<-30 && !this.morto)
+      {
+        this.muori();
       }
     }
 
@@ -614,8 +650,6 @@ function setDimensioneMinore()
 
 function keyPressed()
 {
-  prendiLuminositaWebcam();
-
   if(shakeMeter<shakeMeterSogliaMassima)
   shakeMeter+=shakeIncremento;
   else if(!shakeFranato)
@@ -642,11 +676,27 @@ function mouseWheel(event)
 
   temperaturaMeter-=event.delta;
  temperaturaMeter=constrain(temperaturaMeter,-50,50);
+
+ if(temperaturaMeter<-40)
+ livelloGhiaccio=4;
+ else
+  if(temperaturaMeter<-30)
+  livelloGhiaccio=3;
+  else
+  if(temperaturaMeter<-15)
+  livelloGhiaccio=2;
+  else
+  if(temperaturaMeter<0)
+  livelloGhiaccio=1;
+  else
+  livelloGhiaccio=0;
+
 }
 
 function prendiLuminositaWebcam()
 {
   immagineWebcam=catturaWebcam.loadPixels();
+  
   var numeroSample=20;
   var luminositaPixel=0;
   var sommaLuminosita=0;
