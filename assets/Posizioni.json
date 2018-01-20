@@ -1,0 +1,41 @@
+{
+"creature" : 
+            [
+                {
+                "tipoCreatura":"albero",
+                "x":0.38,
+                "y":0.44,
+                "habitat":"spiaggia"
+                },
+
+                {
+                "tipoCreatura":"albero",
+                "x":0.42,
+                "y":0.47,
+                "habitat":"spiaggia"
+                },
+
+                {
+                "tipoCreatura":"albero",
+                "x":0.44,
+                "y":0.50,
+                "habitat":"spiaggia"
+                },
+
+                {
+                "tipoCreatura":"albero",
+                "x":0.62,
+                "y":0.50,
+                "habitat":"montagna"
+                },
+
+                {
+                "tipoCreatura":"volpe",
+                "x":0.40,
+                "y":0.55,
+                "habitat":"spiaggia"
+                }
+
+
+            ]
+}
