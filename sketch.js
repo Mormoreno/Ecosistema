@@ -126,7 +126,7 @@ function preload()
   spriteAlberi.push(loadImage("assets/Albero_"+i+".png"));
 
   //SUONI
-  suonoPop=loadSound("assets/suoni/Pop.wav");
+  suonoPop=loadSound("assets/Suoni/Pop.wav");
 
   
 
