@@ -33,7 +33,7 @@ var volumeMicrofono=0;
 var hasBlown=false;
 var numSoffi=0;
 var isRaining=false;
-var spriteNuvol
+
 //ACQUA
 var acquaMeter=60;
 var velocitaAcquaScende=1;
