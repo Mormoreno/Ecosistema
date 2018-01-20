@@ -274,7 +274,10 @@ else
 
 acquaMeter=(mouseX/width)*100;
 acquaMeter=constrain(acquaMeter, 0,100);
-var scalaAcqua=dimensioneNormalizzata(0.5781);
+var scalaAcqua=dimensioneNormalizzata(0.46);
+var scalaAcquaY=0.824*scalaAcqua;
+var posizioneAcquaX=xNormalizzata(0.435);
+var posizioneAcquaY=yNormalizzata(0.6);
 if(acquaMeter<20)
   {
    
@@ -284,31 +287,31 @@ if(acquaMeter<20)
   {
     push();
     tint(255,map(acquaMeter,20,40,0,255));
-    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],xNormalizzata(0.5),yNormalizzata(0.5),scalaAcqua,scalaAcqua);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY,scalaAcqua,scalaAcquaY);
     pop();
   }
   if(acquaMeter>=40 && acquaMeter<60)
   {
-    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[0].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,40,60,0,255));
-    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     pop();
   }
   if(acquaMeter>=60 && acquaMeter<80)
   {
-    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[1].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,60,80,0,255));
-    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     pop();
   }
   if(acquaMeter>=80 && acquaMeter<=100)
   {
-    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[2].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,80,100,0,255));
-    image(spriteAcqua[3].ghiacciato[livelloGhiaccio],width*.5,height*.5, scalaAcqua,scalaAcqua);
+    image(spriteAcqua[3].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     pop();
   }
 

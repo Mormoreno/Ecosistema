@@ -3,3 +3,19 @@ Temperatura
 animali
 giorno notte influenza animali
 Nuvole
+
+PROBLEMI
+	Performance tint()
+	Soluzione=Croppa tutti + ghiaccio senza transizione ma a step
+
+	Posizionamento creature
+	Sol: file JSON
+
+	diversificazione creature
+	Sol: stesso oggetto rappresenta più animali/piante
+
+	Luminosita webcam slow
+	Sol: prendi pochi pixel
+
+	Loading lungo
+	Sol:comprimi tutti i png
