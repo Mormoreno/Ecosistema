@@ -48,5 +48,13 @@
                 
 
 
+            ],
+
+"indicatoriTemperatura":
+            [
+                {
+                    "x":0.27,
+                    "y":0.60
+                }
             ]
 }

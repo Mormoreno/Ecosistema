@@ -27,6 +27,7 @@ var volpi=Array();
 
 //TEMPERATURA
 var temperaturaMeter=0;
+var indicatoriTemperatura=Array();
 
 //VENTO
 var microfono;
@@ -170,6 +171,11 @@ function setup() {
       //posizioniAlberi.push(new Posizione(datiPosizione.x,datiPosizione.y));
      // var albero=new Albero(posizioniAlberiSpiaggia[i].x,posizioniAlberiSpiaggia[i].y)
       creature.push(new Creatura(datiCreatura.tipoCreatura,datiCreatura.x,datiCreatura.y,datiCreatura.habitat));
+    }
+
+    for (var i = 0; i < listaPosizioni.indicatoriTemperatura.length; i++) {
+      var datiJSON=listaPosizioni.indicatoriTemperatura[i];
+    indicatoriTemperatura.push(new IndicatoreTemperatura(datiJSON.x,datiJSON.y));
     }
    
  
