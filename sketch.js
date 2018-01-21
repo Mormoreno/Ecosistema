@@ -6,7 +6,7 @@ var desktop=true;
 
 var debug=true;
 var lowRes=false;
-var targetFrameRate=144;
+var targetFrameRate=60;
 
 //BOUNDING
 var spriteBoundingBox;
@@ -28,8 +28,10 @@ var spriteVolpe=Array();
 var volpi=Array();
 
 //TEMPERATURA
-var temperaturaMeter=0;
+var temperaturaMeter=25;
 var indicatoriTemperatura=Array();
+var spriteIndicatoreFreddo;
+var spriteIndicatoreCaldo;
 
 //VENTO
 var microfono;
@@ -104,6 +106,8 @@ function preload()
   
   listaPosizioni = loadJSON("assets/Posizioni.json");
 
+  spriteIndicatoreCaldo=loadImage("assets/Sole.png");
+  spriteIndicatoreFreddo=loadImage("assets/Luna.png");
  
   spriteSole=loadImage("assets/Sole.png");
   spriteLuna=loadImage("assets/Luna.png");
@@ -276,7 +280,7 @@ acquaMeter=(mouseX/width)*100;
 acquaMeter=constrain(acquaMeter, 0,100);
 var scalaAcqua=dimensioneNormalizzata(0.46);
 var scalaAcquaY=0.824*scalaAcqua;
-var posizioneAcquaX=xNormalizzata(0.435);
+var posizioneAcquaX=xNormalizzata(0.448);
 var posizioneAcquaY=yNormalizzata(0.6);
 if(acquaMeter<20)
   {
@@ -345,6 +349,8 @@ if(acquaMeter<20)
   for(var i=0;i<arrayNuvoletteFumetto.length;i++)
   arrayNuvoletteFumetto[i].update();
 
+  for(var i=0;i<indicatoriTemperatura.length;i++)
+  indicatoriTemperatura[i].update(); 
 
 
 image(spriteBoundingBox, width/2,height/2,dimensioneMinore,dimensioneMinore);
@@ -390,8 +396,32 @@ if(debug)
 
 function IndicatoreTemperatura(x,y)
 {
+
   this.x=x;
   this.y=y;
+
+  this.movimentoSuGiu=.007;
+  this.movimentoSuGiuActual=0;
+  this.velocitaMovimentoSuGiu=.001;
+  this.velocitaIngrandimento=10;
+  this.size=.05;
+  this.actualSize=this.size;
+  this.sprite;
+
+  this.update=function()
+  {
+    push();
+
+    if(temperaturaMeter>0)
+    this.sprite=spriteIndicatoreCaldo;
+    else
+    this.sprite=spriteIndicatoreFreddo;
+
+    this.actualSize=lerp(this.actualSize, abs(temperaturaMeter/50),deltaTime*this.velocitaIngrandimento);
+    this.movimentoSuGiuActual=sin(millis()*this.velocitaMovimentoSuGiu)*this.movimentoSuGiu;
+    image(this.sprite,xNormalizzata(this.x),yNormalizzata(this.y+this.movimentoSuGiuActual),dimensioneNormalizzata(this.actualSize*this.size),dimensioneNormalizzata(this.actualSize*this.size));
+    pop();
+  }
 }
 
 function PezzoAcqua()
