@@ -1,4 +1,4 @@
-
+//Per migliorare le performance!
 p5.disableFriendlyErrors = true;
 
 var mobile=false;
@@ -26,6 +26,10 @@ var livelloGhiaccio=0;
 //ANIMALI
 var spriteVolpe=Array();
 var volpi=Array();
+
+var volpiVive=0;
+var volpiTarget=0;
+
 
 //TEMPERATURA
 var temperaturaMeter=25;
@@ -106,8 +110,8 @@ function preload()
   
   listaPosizioni = loadJSON("assets/Posizioni.json");
 
-  spriteIndicatoreCaldo=loadImage("assets/Sole.png");
-  spriteIndicatoreFreddo=loadImage("assets/Luna.png");
+  spriteIndicatoreCaldo=loadImage("assets/Pittogrammi/fiamma.png");
+  spriteIndicatoreFreddo=loadImage("assets/Pittogrammi/fiocco.png");
  
   spriteSole=loadImage("assets/Sole.png");
   spriteLuna=loadImage("assets/Luna.png");
@@ -140,7 +144,8 @@ function preload()
   for(var i=0;i<=4;i++)
   spriteAnimazioneProva.push(loadImage("assets/AnimazioneProva_"+i+".png"));
 
-  spritePittogrammi.push(loadImage("assets/Pittogramma_Sole.png"));
+  for(var i=0;i<=6;i++)
+  spritePittogrammi.push(loadImage("assets/Pittogrammi/Pittogramma_"+i+".png"));
 
   spriteVolpe.push(loadImage("assets/Animali_Volpe.png"));
 
@@ -337,8 +342,15 @@ if(acquaMeter<20)
 
 
   //CREATURE
+  volpiVive=0;
   for(var i=0;i<creature.length;i++)
   {
+    
+    if(creature[i].tipoCreatura=="volpe" && !creature[i].morto)
+    {
+      volpiVive++;
+    }
+
     creature[i].update();
   }
  
@@ -389,6 +401,8 @@ if(debug)
     text("Microfono= "+volumeMicrofono.toFixed(2),10,interlinea);
     interlinea+=20;
     text("Soffi= "+numSoffi,10,interlinea);
+    interlinea+=20;
+    text("Volpi= "+volpiVive,10,interlinea);
     
   }
 
@@ -451,6 +465,21 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
   this.velocitaLerp=3;
   this.lifeTime=2;
   this.timerLifeTime=0;
+  this.spritePittogramma=spritePittogrammi[0];
+  switch(tipoFumetto)
+  {
+    case "caldo":this.spritePittogramma=spritePittogrammi[0];break;
+    case "freddo":this.spritePittogramma=spritePittogrammi[1];break;
+    case "notte":this.spritePittogramma=spritePittogrammi[2];break;
+    case "morte":this.spritePittogramma=spritePittogrammi[3];break;
+    case "acqua":this.spritePittogramma=spritePittogrammi[4];break;
+    case "giorno":this.spritePittogramma=spritePittogrammi[5];break;
+    case "spavento":this.spritePittogramma=spritePittogrammi[6];break;
+
+    default:break;
+  }
+ 
+  this.ratioSprite=this.spritePittogramma.height/this.spritePittogramma.width;
 
   this.update=function()
   { 
@@ -495,7 +524,7 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
 
     push();
     image(spriteNuvolettaFumetto,xNormalizzata(this.x),yNormalizzata(this.y-.04),dimensioneMinore*.05*this.scala,dimensioneMinore*.05*this.scala);
-    image(spritePittogrammi[0],xNormalizzata(this.x),yNormalizzata(this.y-.04),dimensioneMinore*.05*this.scala,dimensioneMinore*.05*this.scala);
+    image(this.spritePittogramma,xNormalizzata(this.x),yNormalizzata(this.y-.042),dimensioneNormalizzata(0.02)*this.scala,dimensioneNormalizzata(0.02)*this.scala*(this.ratioSprite));
     pop();
   }
 }
@@ -507,6 +536,9 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.tipoCreatura=tipoCreatura;
   this.habitat=habitat;
   this.spriteCreatura;
+
+  this.caldo=0;
+  this.tolleranzaCaldo=10;
 
   switch(tipoCreatura)
   {
@@ -554,7 +586,7 @@ function Creatura(tipoCreatura,x,y,habitat)
 
       if(acquaMeter<20)
       {
-        this.fumetto("sete");
+        this.fumetto("acqua");
       }
     }
     else
