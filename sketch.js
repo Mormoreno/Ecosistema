@@ -73,10 +73,12 @@ var immagineWebcam;
 var luminositaWebcam=0;
 var luminositaWebcamOldFrame;
 var sogliaSensoreLuminosita=10;
-var orologioMeter=0;
+var orologioMeter=100;
 var velocitaCambioGiornoNotte=.5;
 var spriteSole;
 var spriteLuna;
+var coloreGiorno;
+var coloreNotte;
 
 
 
@@ -112,6 +114,7 @@ var dimensioneMinore;
 var deltaTime=0;
 var animazioniInCorso=Array();
 var spriteEsplosione=Array();
+var spriteSfumatura;
 
 var animazioneProva;
 var velocitaAnimazioneProva=10;
@@ -185,7 +188,7 @@ function preload()
 
   
 
-  provaBilinear=(loadImage("assets/ProvaBilinear.png"));
+  spriteSfumatura=(loadImage("assets/Sfumatura.png"));
 
 }
 
@@ -260,6 +263,9 @@ function setup() {
       spriteAnimazioneProva[i].resize(50,50);
     }
 
+    coloreGiorno=color("#8084ff");
+    coloreNotte=color("#10112b");
+
     
   }
   
@@ -279,7 +285,8 @@ function draw() {
   if(deltaTime>.5)
   deltaTime=.5;
 
-background(orologioMeter*2.55);
+  background(lerpColor(coloreNotte, coloreGiorno, orologioMeter/100) );
+//background(orologioMeter*2.55);
 
 
 
@@ -314,8 +321,16 @@ image(spriteLuna,xNormalizzata(.8),yNormalizzata(.1+posizioneLuna*.8),dimensione
 prendiVolumeMicrofono();
 
 
+//SFUMATURA
+
+push();
+tint(lerpColor(coloreNotte, coloreGiorno, orologioMeter/100));
+image(spriteSfumatura, xNormalizzata(0.5), yNormalizzata(0.5), dimensioneNormalizzata(1), dimensioneNormalizzata(1));
+pop();
+
 //TerraBase
 image(spriteTerra,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
+
 
 //Montagna
 image(spriteMontagna,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
@@ -443,7 +458,7 @@ if(debug)
     
   }
 
-  image(provaBilinear, xNormalizzata(0.5), yNormalizzata(0.5), dimensioneNormalizzata(1), dimensioneNormalizzata(1));
+  
 
 }
 
