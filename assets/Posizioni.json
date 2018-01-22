@@ -2,55 +2,246 @@
 "creature" : 
             [
                 {
-                "tipoCreatura":"albero",
-                "x":0.4,
-                "y":0.44,
-                "habitat":"spiaggia"
+                    "tipoCreatura":"albero",
+                    "x":0.4,
+                    "y":0.44,
+                    "habitat":"spiaggia"
                 },
 
                 {
-                "tipoCreatura":"albero",
-                "x":0.42,
-                "y":0.47,
-                "habitat":"spiaggia"
+                    "tipoCreatura":"albero",
+                    "x":0.42,
+                    "y":0.47,
+                    "habitat":"spiaggia"
                 },
 
                 {
-                "tipoCreatura":"albero",
-                "x":0.39,
-                "y":0.46,
-                "habitat":"spiaggia"
+                    "tipoCreatura":"albero",
+                    "x":0.39,
+                    "y":0.47,
+                    "habitat":"spiaggia"
                 },
 
                 {
-                "tipoCreatura":"albero",
-                "x":0.44,
-                "y":0.50,
-                "habitat":"spiaggia"
+                    "tipoCreatura":"albero",
+                    "x":0.44,
+                    "y":0.50,
+                    "habitat":"spiaggia"
                 },
 
                 {
-                "tipoCreatura":"albero",
-                "x":0.62,
-                "y":0.50,
-                "habitat":"montagna"
+                    "tipoCreatura":"albero",
+                    "x":0.48,
+                    "y":0.50,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.56,
+                    "y":0.58,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.67,
+                    "y":0.44,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.67,
+                    "y":0.47,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.64,
+                    "y":0.46,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.62,
+                    "y":0.50,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.71,
+                    "y":0.48,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.77,
+                    "y":0.52,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.69,
+                    "y":0.50,
+                    "habitat":"montagna"
                 },
 
 
 
+
+
+
+
+
+
                 {
-                "tipoCreatura":"volpe",
-                "x":0.40,
-                "y":0.55,
-                "habitat":"spiaggia"
+                    "tipoCreatura":"volpe",
+                    "x":0.66,
+                    "y":0.52,
+                    "habitat":"montagna"
                 },
 
                 {
-                "tipoCreatura":"volpe",
-                "x":0.67,
-                "y":0.51,
-                "habitat":"montagna"
+                    "tipoCreatura":"volpe",
+                    "x":0.58,
+                    "y":0.53,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"volpe",
+                    "x":0.61,
+                    "y":0.56,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"volpe",
+                    "x":0.71,
+                    "y":0.54,
+                    "habitat":"montagna"
+                },
+
+                {
+                    "tipoCreatura":"volpe",
+                    "x":0.66,
+                    "y":0.58,
+                    "habitat":"montagna"
+                },
+
+
+
+
+
+
+
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.52,
+                    "y":0.54,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.54,
+                    "y":0.60,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.62,
+                    "y":0.61,
+                    "habitat":"spiaggia"
+                },
+                
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.44,
+                    "y":0.53,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.37,
+                    "y":0.50,
+                    "habitat":"spiaggia"
+                },
+
+                {
+                    "tipoCreatura":"lontra",
+                    "x":0.53,
+                    "y":0.56,
+                    "habitat":"spiaggia"
+                },
+
+
+
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.30,
+                    "y":0.54,
+                    "habitat":"mareLivello1"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.42,
+                    "y":0.63,
+                    "habitat":"mareLivello1"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.50,
+                    "y":0.63,
+                    "habitat":"mareLivello2"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.39,
+                    "y":0.55,
+                    "habitat":"mareLivello2"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.58,
+                    "y":0.64,
+                    "habitat":"mareLivello3"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.48,
+                    "y":0.57,
+                    "habitat":"mareLivello3"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.40,
+                    "y":0.47,
+                    "habitat":"mareLivello4"
+                },
+
+                {
+                    "tipoCreatura":"pesce",
+                    "x":0.58,
+                    "y":0.58,
+                    "habitat":"mareLivello4"
                 }
+
 
                
 
