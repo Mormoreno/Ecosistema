@@ -4,6 +4,9 @@ animali
 giorno notte influenza animali
 Nuvole
 
+TODO
+cambia i random degli sprite in modo più semplice
+
 PROBLEMI
 	Performance tint()
 	Soluzione=Croppa tutti + ghiaccio senza transizione ma a step
@@ -19,3 +22,8 @@ PROBLEMI
 
 	Loading lungo
 	Sol:comprimi tutti i png
+
+
+
+DOMANDE:
+chi ha bisogno del giorno/notte? Cosa succede se non si rispetta il ciclo?

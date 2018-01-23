@@ -16,6 +16,10 @@ var spriteTerra;
 var spriteMontagna;
 
 //ACQUA
+var acquaMeter=60;
+var velocitaAcquaScende=.5;
+var velocitaAcquaSale=5;
+
 var spriteAcqua=Array();
 var spriteGhiaccio=Array();
 var spriteAnimazioneProva=Array();
@@ -54,17 +58,21 @@ var modificatoreCambioTemperatura=0.3;
 var microfono;
 var sogliaSuonoUdibile=0.5;
 var tempoTraSoffi=1;
-var timerSoffi;
+var timerSoffi=0.0;
 var volumeMicrofono=0;
 var hasBlown=false;
 var numSoffi=0;
 var isRaining=false;
+var isSnowing=false;
 var spriteNuvole=Array();
+var nuvole=Array();
 
-//ACQUA
-var acquaMeter=60;
-var velocitaAcquaScende=1;
-var velocitaAcquaSale=5;
+var spritePioggia=Array();
+var pioggiaObj;
+var spriteNeve=Array();
+var neveObj;
+
+
  
 
 //GIORNO/NOTTE
@@ -79,7 +87,9 @@ var spriteSole;
 var spriteLuna;
 var coloreGiorno;
 var coloreNotte;
-
+var daQuantiSecondiDuraLaNotte=0;
+var daQuantiSecondiDuraIlGiorno=0;
+var isGiorno=false;
 
 
 //ALBERI
@@ -94,7 +104,7 @@ var creature=Array();
 
 //TERREMOTO
 var shakeMeter=0;
-var shakeMeterVelocitaPerTornareAZero=3;
+var shakeMeterVelocitaPerTornareAZero=4;
 var shakeMeterSogliaMassima=10;
 var shakeIncremento=1;
 var shakePotenza=10 ;
@@ -108,6 +118,10 @@ var spritePittogrammi=Array();
 
 //SUONI
 var suonoPop;
+var suonoNotte;
+var suonoGiorno;
+var suonoPioggia;
+var suonoFrana;
 
 var dimensioneMinoreLato;
 var dimensioneMinore;
@@ -141,9 +155,6 @@ function preload()
 
   spriteNuvolettaFumetto=loadImage("assets/NuvolettaFumetto.png");
 
-  /*for(var i=0;i<=3;i++)
-  spriteAcqua.push(loadImage("assets/Acqua_"+i+".png"));*/
-
   for(var i=0;i<=3;i++)
     {
       var pezzoAcqua=new PezzoAcqua();
@@ -155,6 +166,12 @@ function preload()
       pezzoAcqua=null;
 
     }
+
+  for(var i=0;i<=9;i++)
+  spritePioggia.push(loadImage("assets/Pioggia/Pioggia_"+i+".png"));
+
+  for(var i=0;i<=9;i++)
+  spriteNeve.push(loadImage("assets/Neve/Neve_"+i+".png"));
 
   for(var i=0;i<=3;i++)
   spriteGhiaccio.push(loadImage("assets/Ghiaccio_"+i+".png"));
@@ -185,6 +202,9 @@ function preload()
 
   //SUONI
   suonoPop=loadSound("assets/Suoni/Pop.wav");
+  suonoPop.setVolume(0.05);
+  suonoNotte=loadSound("assets/Suoni/SuonoNotte.mp3");
+  
 
   
 
@@ -197,6 +217,8 @@ function setup() {
     setDimensioneMinore();
     imageMode(CENTER);
     frameRate(targetFrameRate);
+
+    
 
     //INIZIALIZZA WEBCAM
     catturaWebcam=createCapture(VIDEO);
@@ -240,6 +262,11 @@ function setup() {
       var datiJSON=listaPosizioni.indicatoriTemperatura[i];
     indicatoriTemperatura.push(new IndicatoreTemperatura(datiJSON.x,datiJSON.y));
     }
+
+    for (var i = 0; i < listaPosizioni.posizioniNuvole.length; i++) {
+      var datiJSON=listaPosizioni.posizioniNuvole[i];
+    nuvole.push(new Nuvola(datiJSON.x1,datiJSON.y1,datiJSON.x2,datiJSON.y2,datiJSON.x3,datiJSON.y3));
+    }
    
  
 
@@ -266,6 +293,15 @@ function setup() {
     coloreGiorno=color("#8084ff");
     coloreNotte=color("#10112b");
 
+    //SUONI
+    suonoNotte.setLoop(true);
+
+    pioggiaObj=new Animazione(spritePioggia,0.5,0.5,1,1,.5,true);
+    pioggiaObj.setPlay(false);
+
+    neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true);
+    neveObj.setPlay(false);
+    
     
   }
   
@@ -311,6 +347,22 @@ prendiLuminositaWebcam();
 
 orologioMeter=lerp(orologioMeter,luminositaWebcam,deltaTime*velocitaCambioGiornoNotte);
 
+if(orologioMeter>50)
+{
+  isGiorno=true;
+  if(daQuantiSecondiDuraLaNotte!=0.0)
+  daQuantiSecondiDuraLaNotte=0.0;
+  daQuantiSecondiDuraIlGiorno+=deltaTime;
+}
+else
+{
+  isGiorno=false;
+  if(daQuantiSecondiDuraIlGiorno!=0.0)
+  daQuantiSecondiDuraIlGiorno=0.0;
+  daQuantiSecondiDuraLaNotte+=deltaTime;
+}
+
+
 var posizioneSole=(100-orologioMeter)/100;
 var posizioneLuna=(orologioMeter)/100;
 
@@ -342,10 +394,14 @@ if(isRaining)
 }
 else
 {
-  acquaMeter-=deltaTime*velocitaAcquaScende;
+  var modificatoreTemperatura=1;
+  if(temperaturaMeter>25)
+  modificatoreTemperatura=map(temperaturaMeter,25,50,0,10);
+
+  acquaMeter-=deltaTime*velocitaAcquaScende*modificatoreTemperatura;
 }
 
-acquaMeter=(mouseX/width)*100;
+//acquaMeter=(mouseX/width)*100;
 acquaMeter=constrain(acquaMeter, 0,100);
 var scalaAcqua=dimensioneNormalizzata(0.46);
 var scalaAcquaY=0.824*scalaAcqua;
@@ -410,6 +466,9 @@ if(acquaMeter<soglieAcqua[0])
   for(var i=0;i<animazioniInCorso.length;i++)
   animazioniInCorso[i].update();
 
+  for(var i=0;i<nuvole.length;i++)
+  nuvole[i].update();
+
   for(var i=0;i<arrayNuvoletteFumetto.length;i++)
   arrayNuvoletteFumetto[i].update();
 
@@ -417,7 +476,7 @@ if(acquaMeter<soglieAcqua[0])
   indicatoriTemperatura[i].update(); 
 
 
-image(spriteBoundingBox, width/2,height/2,dimensioneMinore,dimensioneMinore);
+//image(spriteBoundingBox, width/2,height/2,dimensioneMinore,dimensioneMinore);
 
 //FINE
 pop();
@@ -455,10 +514,14 @@ if(debug)
     text("Soffi= "+numSoffi,10,interlinea);
     interlinea+=20;
     text("Volpi= "+volpiVive,10,interlinea);
+    interlinea+=20;
+    text("Notte= "+daQuantiSecondiDuraLaNotte.toFixed(1),10,interlinea);
+    interlinea+=20;
+    text("Giorno= "+daQuantiSecondiDuraIlGiorno.toFixed(1),10,interlinea);
     
   }
 
-  
+  gestisciSuoni();
 
 }
 
@@ -520,6 +583,7 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
   this.lifeTime=1;
   this.timerLifeTime=0;
   this.spritePittogramma=spritePittogrammi[0];
+  this.tempoPrimaDiPoterRiparlare=3;
 
   this.maxSize=dimensioneNormalizzata(0.03);
   this.maxSizePittogramma=this.maxSize*.38;
@@ -602,6 +666,9 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.sfortunato=false;
   this.dovrebbeMorire=false;
   this.dovrebbeNascere=false;
+  this.tempoPrimaDiPoterRiparlare=3.0;
+  this.canTalkTimer=0.0;
+  this.startCanTalkTimer=false;
 
   this.sogliaAcquaMortale;
   this.sogliaAcquaPericolo;
@@ -610,28 +677,31 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.caldo=0;
   this.tolleranzaCaldo=10;
 
+  this.tolleranzaGiorno=6;
+  this.tolleranzaNotte=6;
+
 
   switch(tipoCreatura)
   {
     case "albero":
                   this.size=0.08;
-                  this.spriteCreatura=spriteAlberi[parseInt(random(0,spriteAlberi.length))];
+                  this.spriteCreatura=random(spriteAlberi);
                   
     break;
 
     case "volpe":
                 this.size=0.04;
-                this.spriteCreatura=spriteVolpe[parseInt(random(0,spriteVolpe.length))];
+                this.spriteCreatura=random(spriteVolpe);
     break;
 
     case "lontra":
                 this.size=0.04;
-                this.spriteCreatura=spriteLontra[parseInt(random(0,spriteLontra.length))];
+                this.spriteCreatura=random(spriteLontra);
     break;
 
     case "pesce":
                 this.size=0.04;
-                this.spriteCreatura=spritePesce[parseInt(random(0,spritePesce.length))];
+                this.spriteCreatura=random(spritePesce);
                 this.velocitaCrescita=.05;
 
                 if(this.habitat=="mareLivello1")
@@ -657,6 +727,7 @@ function Creatura(tipoCreatura,x,y,habitat)
                 else
                 if(this.habitat=="mareLivello4")
                 {
+                  
                   this.sogliaAcquaMortale=90;
                   this.sogliaAcquaPericolo=95;
                   this.sogliaAcquaRinasce=99;
@@ -707,6 +778,14 @@ function Creatura(tipoCreatura,x,y,habitat)
       if(random()<.5)
       if(frameCount%100==0)
       this.spriteCasuale(spriteVolpe);
+
+      if(shakeMeter>5)
+      this.fumetto("spavento");
+
+      if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
+      this.fumetto("notte");
+      if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
+      this.fumetto("giorno");
     }
     else
     //LONTRE
@@ -798,6 +877,15 @@ function Creatura(tipoCreatura,x,y,habitat)
         }
       }
 
+      if(this.startCanTalkTimer)
+      this.canTalkTimer+=deltaTime;
+      if(this.canTalkTimer>=this.tempoPrimaDiPoterRiparlare)
+      {
+        this.canTalkTimer=0;
+        this.canTalk=true;
+        this.startCanTalkTimer=false;
+      }
+
       image(this.spriteCreatura,xNormalizzata(this.x),yNormalizzata(this.y),dimensioneNormalizzata(this.actualSize),dimensioneNormalizzata(this.actualSize*this.ratio));
     }
       pop();
@@ -808,9 +896,13 @@ function Creatura(tipoCreatura,x,y,habitat)
     if(this.morto)
     return;
 
-    suonoPop.play();
-    new Animazione(spriteEsplosione,this.x,this.y,.05,.05,.05,false);
-    this.morto=true;
+    //Allo start-up non fare rumore
+    if(frameCount>120)
+    {
+      suonoPop.play();
+      new Animazione(spriteEsplosione,this.x,this.y,.05,.05,.05,false);
+    }
+      this.morto=true;
     this.actualSize=0;
   }
   this.nasci=function()
@@ -833,7 +925,8 @@ function Creatura(tipoCreatura,x,y,habitat)
 
   this.canTalkAgain=function()
   {
-    this.canTalk=true;
+    this.startCanTalkTimer=true;
+    //this.canTalk=true;
   }
 
   this.assegnaIndiceCreatura=function(id)
@@ -845,12 +938,76 @@ function Creatura(tipoCreatura,x,y,habitat)
 
   this.spriteCasuale=function(arraySprite)
   {
-    this.spriteCreatura=arraySprite[parseInt(random(0,arraySprite.length))];
+    this.spriteCreatura=random(arraySprite);
   }
 }
 
 
+function Nuvola(x1,y1,x2,y2,x3,y3)
+{
+  this.x1=x1;
+  this.x2=x2;
+  this.x3=x3;
+  this.y1=y1;
+  this.y2=y2;
+  this.y3=y3;
 
+  this.x=this.x1;
+  this.y=this.y1;
+
+  this.targetX=this.x;
+  this.targetY=this.y;
+
+  this.isEntering=false;
+  this.isExiting=false;
+
+
+
+  this.size=0.1;
+  this.actualSize=0.001;
+  this.targetSize=this.actualSize;
+
+  this.velocitaLerp=3;
+
+  this.spriteNuvola=random(spriteNuvole);
+
+  this.update=function()
+  {
+
+    this.x=lerp(this.x,this.targetX,deltaTime*this.velocitaLerp);
+    this.y=lerp(this.y,this.targetY,deltaTime*this.velocitaLerp);
+    this.actualSize=lerp(this.actualSize,this.targetSize,deltaTime*this.velocitaLerp);
+    
+    
+
+    push();
+    if(this.actualSize>0.001)
+    image(this.spriteNuvola,xNormalizzata(this.x),yNormalizzata(this.y),dimensioneNormalizzata(this.actualSize),dimensioneNormalizzata(this.actualSize));
+    pop();
+  }
+
+  this.entra=function()
+  {
+    this.isEntering=true;
+    this.actualSize=0.0001;
+    this.targetSize=this.size;
+
+    this.x=this.x1;
+    this.y=this.y1;
+
+    this.targetX=this.x2;
+    this.targetY=this.y2;
+  }
+
+  this.esci=function()
+  {
+    this.targetSize=0.0001;
+
+    this.isExiting=true;
+    this.targetX=this.x3;
+    this.targetY=this.y3;
+  }
+}
 
 
 function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
@@ -865,6 +1022,8 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
   this.durata=durata;
   this.velocita=durata/arrayFotogrammi.length;
   this.zIndex=zIndex;
+  this.pausa=false;
+  this.play=true;
   
 
   this.ratio=arrayFotogrammi[0].height/arrayFotogrammi[0].width;
@@ -877,8 +1036,16 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
   
   this.update=function()
   {
+
+    if(!this.play)
+    return;
+
     if(this.timerIndice<this.velocita)
-    this.timerIndice+=deltaTime;
+    {
+      this.timerIndice+=deltaTime;
+      if(this.pausa)
+      this.timerIndice=0;
+    }
     else
     {
       this.timerIndice=0;
@@ -897,6 +1064,16 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
     if(!this.animazioneFinita)
     image(this.arrayFotogrammi[this.indiceSprite], xNormalizzata(this.x), yNormalizzata(this.y), dimensioneNormalizzata(this.sizeX), dimensioneNormalizzata(this.sizeY*this.ratio));
     pop();
+  }
+
+  this.setPausa=function(val)
+  {
+    this.pausa=val;
+  }
+
+  this.setPlay=function(val)
+  {
+    this.play=val;
   }
 
 
@@ -946,6 +1123,7 @@ function setDimensioneMinore()
 
 function keyPressed()
 {
+
   if(shakeMeter<shakeMeterSogliaMassima)
   shakeMeter+=shakeIncremento;
   else if(!shakeFranato)
@@ -986,6 +1164,21 @@ function mouseWheel(event)
   livelloGhiaccio=1;
   else
   livelloGhiaccio=0;
+
+  if(temperaturaMeter<0 && isRaining)
+  {
+    isRaining=false;
+    isSnowing=true;
+  }
+  if(temperaturaMeter>0 && isSnowing)
+  {
+    isRaining=true;
+    isSnowing=false;
+  }
+
+  pioggiaObj.setPlay(isRaining);
+      neveObj.setPlay(isSnowing);
+
 
 }
 
@@ -1044,17 +1237,78 @@ function prendiVolumeMicrofono()
       numSoffi=0;
 
       if(numSoffi==2)
-      isRaining=true;
+      {
+        if(temperaturaMeter>0)
+        isRaining=true;
+        else
+        isSnowing=true;
+      }
       else
-      isRaining=false;
+      {
+        if(temperaturaMeter>0)
+        isRaining=false;
+        else
+        isSnowing=false;
+      }
+
+
+      switch(numSoffi)
+      {
+        case 1:for(var i=0;i<nuvole.length;i+=2)
+              {
+                nuvole[i].entra();
+              }
+              break;
+        
+        case 2:for(var i=1;i<nuvole.length;i+=2)
+              {
+                nuvole[i].entra();
+              }
+              break;
+
+        case 0:for(var i=0;i<nuvole.length;i++)
+              {
+                nuvole[i].esci();
+              }
+              break;
+        
+
+      }
+
+      pioggiaObj.setPlay(isRaining);
+      neveObj.setPlay(isSnowing);
+
+      
 
       myLog("soffiato");
     }
   }
   else
   {
-    if(volumeMicrofono<sogliaSuonoUdibile/2)
-    hasBlown=false;
+    timerSoffi+=deltaTime;
+    if(volumeMicrofono<sogliaSuonoUdibile/2 && timerSoffi>tempoTraSoffi)
+    {
+      hasBlown=false;
+      timerSoffi=0;
+    }
+  }
+
+}
+
+function gestisciSuoni()
+{
+
+  var volumeSuonoNotte=map(orologioMeter,0,50,1,0);
+  volumeSuonoNotte=constrain(volumeSuonoNotte,0,1);
+  suonoNotte.setVolume(volumeSuonoNotte);
+
+  if(!isGiorno)
+  {
+    if(!suonoNotte.isPlaying())
+    {
+      
+      suonoNotte.play();
+    }
   }
 
 }
