@@ -52,7 +52,7 @@ var temperaturaMeter=25;
 var indicatoriTemperatura=Array();
 var spriteIndicatoreFreddo;
 var spriteIndicatoreCaldo;
-var modificatoreCambioTemperatura=0.3;
+var modificatoreCambioTemperatura=0.15;
 
 //VENTO
 var microfono;
@@ -202,7 +202,7 @@ function preload()
 
   //SUONI
   suonoPop=loadSound("assets/Suoni/Pop.wav");
-  suonoPop.setVolume(0.05);
+  suonoPop.setVolume(0.03);
   suonoNotte=loadSound("assets/Suoni/SuonoNotte.mp3");
   
 
