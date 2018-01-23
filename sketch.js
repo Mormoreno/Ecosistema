@@ -27,6 +27,7 @@ var soglieAcqua=[20,40,60,80,100]
 
 var numeroTransizioniGhiaccio=5;
 var livelloGhiaccio=0;
+var livelloAcqua=0;
 
 //ANIMALI
 var spriteVolpe=Array();
@@ -401,7 +402,7 @@ else
   acquaMeter-=deltaTime*velocitaAcquaScende*modificatoreTemperatura;
 }
 
-//acquaMeter=(mouseX/width)*100;
+acquaMeter=(mouseX/width)*100+10;
 acquaMeter=constrain(acquaMeter, 0,100);
 var scalaAcqua=dimensioneNormalizzata(0.46);
 var scalaAcquaY=0.824*scalaAcqua;
@@ -409,11 +410,12 @@ var posizioneAcquaX=xNormalizzata(0.448);
 var posizioneAcquaY=yNormalizzata(0.6);
 if(acquaMeter<soglieAcqua[0])
   {
-   
+   livelloAcqua=0;
   }
   else
   if(acquaMeter>=soglieAcqua[0] && acquaMeter<soglieAcqua[1])
   {
+    livelloAcqua=1;
     push();
     tint(255,map(acquaMeter,soglieAcqua[0],soglieAcqua[1],0,255));
     image(spriteAcqua[0].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY,scalaAcqua,scalaAcquaY);
@@ -421,6 +423,7 @@ if(acquaMeter<soglieAcqua[0])
   }
   if(acquaMeter>=soglieAcqua[1] && acquaMeter<soglieAcqua[2])
   {
+    livelloAcqua=2;
     image(spriteAcqua[0].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,soglieAcqua[1],soglieAcqua[2],0,255));
@@ -429,6 +432,7 @@ if(acquaMeter<soglieAcqua[0])
   }
   if(acquaMeter>=soglieAcqua[2] && acquaMeter<soglieAcqua[3])
   {
+    livelloAcqua=3;
     image(spriteAcqua[1].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,soglieAcqua[2],soglieAcqua[3],0,255));
@@ -437,6 +441,7 @@ if(acquaMeter<soglieAcqua[0])
   }
   if(acquaMeter>=soglieAcqua[3] && acquaMeter<=soglieAcqua[4])
   {
+    livelloAcqua=4;
     image(spriteAcqua[2].ghiacciato[livelloGhiaccio],posizioneAcquaX,posizioneAcquaY, scalaAcqua,scalaAcquaY);
     push();
     tint(255,map(acquaMeter,soglieAcqua[3],soglieAcqua[4],0,255));
@@ -451,12 +456,20 @@ if(acquaMeter<soglieAcqua[0])
 
   //CREATURE
   volpiVive=0;
+  lontreVive=0;
+  pesciVivi=0;
   for(var i=0;i<creature.length;i++)
   {
-    
-    if(creature[i].tipoCreatura=="volpe" && !creature[i].morto)
+    if(!creature[i].morto)
     {
+      if(creature[i].tipoCreatura=="volpe" )
       volpiVive++;
+      else
+      if(creature[i].tipoCreatura=="lontra" )
+      lontreVive++;
+      else
+      if(creature[i].tipoCreatura=="pesce" )
+      pesciVivi++;
     }
 
     creature[i].update();
@@ -515,9 +528,15 @@ if(debug)
     interlinea+=20;
     text("Volpi= "+volpiVive,10,interlinea);
     interlinea+=20;
+    text("Lontre= "+lontreVive,10,interlinea);
+    interlinea+=20;
+    text("Pesci= "+pesciVivi,10,interlinea);
+    interlinea+=20;
     text("Notte= "+daQuantiSecondiDuraLaNotte.toFixed(1),10,interlinea);
     interlinea+=20;
     text("Giorno= "+daQuantiSecondiDuraIlGiorno.toFixed(1),10,interlinea);
+    interlinea+=20;
+    text("LivelloAcqua= "+livelloAcqua,10,interlinea);
     
   }
 
@@ -588,6 +607,12 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
   this.maxSize=dimensioneNormalizzata(0.03);
   this.maxSizePittogramma=this.maxSize*.38;
 
+  this.altezza=0.045;
+  if(this.owner.tipoCreatura!="albero")
+  {
+    this.altezza=0.02;
+  }
+
 
   switch(tipoFumetto)
   {
@@ -646,8 +671,8 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
     }
 
     push();
-    image(spriteNuvolettaFumetto,xNormalizzata(this.x),yNormalizzata(this.y-.04),this.maxSize*this.scala,this.maxSize*this.scala);
-    image(this.spritePittogramma,xNormalizzata(this.x),yNormalizzata(this.y-.042),this.maxSizePittogramma*this.scala,this.maxSizePittogramma*this.scala*(this.ratioSprite));
+    image(spriteNuvolettaFumetto,xNormalizzata(this.x),yNormalizzata(this.y-this.altezza),this.maxSize*this.scala,this.maxSize*this.scala);
+    image(this.spritePittogramma,xNormalizzata(this.x),yNormalizzata(this.y-this.altezza-.002),this.maxSizePittogramma*this.scala,this.maxSizePittogramma*this.scala*(this.ratioSprite));
     pop();
   }
 }
@@ -677,8 +702,8 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.caldo=0;
   this.tolleranzaCaldo=10;
 
-  this.tolleranzaGiorno=6;
-  this.tolleranzaNotte=6;
+  this.tolleranzaGiorno=60;
+  this.tolleranzaNotte=60;
 
 
   switch(tipoCreatura)
@@ -692,6 +717,7 @@ function Creatura(tipoCreatura,x,y,habitat)
     case "volpe":
                 this.size=0.04;
                 this.spriteCreatura=random(spriteVolpe);
+                this.velocitaCrescita=0.005;
     break;
 
     case "lontra":
@@ -775,17 +801,61 @@ function Creatura(tipoCreatura,x,y,habitat)
     //VOLPI====================================
     if(this.tipoCreatura=="volpe")
     {
-      if(random()<.5)
-      if(frameCount%100==0)
-      this.spriteCasuale(spriteVolpe);
+      if(shakeFranato && this.indiceCreatura%2==0)
+      {
+        this.muori();
+      }
+      else
+      {
+        if(random()<.5)
+        if(frameCount%100==0)
+        this.spriteCasuale(spriteVolpe);
 
-      if(shakeMeter>5)
-      this.fumetto("spavento");
+        if(shakeMeter>5)
+        this.fumetto("spavento");
 
-      if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
-      this.fumetto("notte");
-      if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
-      this.fumetto("giorno");
+        if(livelloAcqua==4)
+        {
+          if(this.habitat!="mareLivello3")
+          {
+            this.muori();
+          }
+          else
+          this.nasci();
+        }
+        else
+        if(livelloAcqua==3)
+        {
+          this.nasci();
+        }
+        else
+        if(livelloAcqua==2)
+        {
+          if(this.habitat=="mareLivello3")
+          this.muori();
+          else
+          this.nasci();
+        }
+        if(livelloAcqua==1)
+        {
+          if(this.habitat=="mareLivello2" || this.habitat=="mareLivello3")
+          this.muori();
+          else
+          this.nasci();
+        }
+        if(livelloAcqua==0)
+        {
+          if(this.habitat=="mareLivello1" || this.habitat=="mareLivello2" || this.habitat=="mareLivello3")
+          this.muori();
+          else
+          this.nasci();
+        }
+
+        if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
+        this.fumetto("notte");
+        if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
+        this.fumetto("giorno");
+      }
     }
     else
     //LONTRE
@@ -795,6 +865,18 @@ function Creatura(tipoCreatura,x,y,habitat)
       if(random()<.5)
       if(frameCount%120==0)
       this.spriteCasuale(spriteLontra);
+
+      for(var i=0;i<4;i++)
+      {
+        if(this.habitat=="mareLivello"+(i+1).toString())
+        {
+          if(acquaMeter<soglieAcqua[i])
+          this.dovrebbeMorire=true;
+          else
+          this.dovrebbeNascere=true;
+        }
+        
+      }
 
       if(this.sfortunato)
         {
@@ -939,6 +1021,7 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.spriteCasuale=function(arraySprite)
   {
     this.spriteCreatura=random(arraySprite);
+    this.ratio=this.spriteCreatura.height/this.spriteCreatura.width;
   }
 }
 

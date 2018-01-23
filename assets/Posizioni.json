@@ -104,35 +104,35 @@
                     "tipoCreatura":"volpe",
                     "x":0.66,
                     "y":0.52,
-                    "habitat":"montagna"
+                    "habitat":"mareLivello0"
                 },
 
                 {
                     "tipoCreatura":"volpe",
                     "x":0.58,
                     "y":0.53,
-                    "habitat":"montagna"
+                    "habitat":"mareLivello0"
                 },
 
                 {
                     "tipoCreatura":"volpe",
                     "x":0.61,
                     "y":0.56,
-                    "habitat":"montagna"
+                    "habitat":"mareLivello1"
                 },
 
                 {
                     "tipoCreatura":"volpe",
                     "x":0.71,
                     "y":0.54,
-                    "habitat":"montagna"
+                    "habitat":"mareLivello2"
                 },
 
                 {
                     "tipoCreatura":"volpe",
                     "x":0.66,
                     "y":0.58,
-                    "habitat":"montagna"
+                    "habitat":"mareLivello3"
                 },
 
 
@@ -145,42 +145,42 @@
                     "tipoCreatura":"lontra",
                     "x":0.52,
                     "y":0.54,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello0"
                 },
 
                 {
                     "tipoCreatura":"lontra",
                     "x":0.54,
                     "y":0.60,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello1"
                 },
 
                 {
                     "tipoCreatura":"lontra",
                     "x":0.62,
                     "y":0.61,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello2"
                 },
                 
                 {
                     "tipoCreatura":"lontra",
                     "x":0.44,
                     "y":0.53,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello2"
                 },
 
                 {
                     "tipoCreatura":"lontra",
                     "x":0.37,
                     "y":0.50,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello3"
                 },
 
                 {
                     "tipoCreatura":"lontra",
                     "x":0.53,
                     "y":0.56,
-                    "habitat":"spiaggia"
+                    "habitat":"mareLivello4"
                 },
 
 

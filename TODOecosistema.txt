@@ -4,8 +4,10 @@ animali
 giorno notte influenza animali
 Nuvole
 
-TODO
-cambia i random degli sprite in modo più semplice
+piante e giorno/notte
+pioggia tint()
+SUONI
+
 
 PROBLEMI
 	Performance tint()
