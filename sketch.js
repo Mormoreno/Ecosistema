@@ -1261,10 +1261,19 @@ function setDimensioneMinore()
   }
 }
 
+function deviceShaken()
+{
+  terremoto();
+}
+
 function keyPressed()
 {
+ terremoto();
 
+}
 
+function terremoto()
+{
   suonoTerremoto.rate(1+random(-.1,.1));
   suonoTerremoto.play();
   if(shakeMeter<shakeMeterSogliaMassima)
@@ -1273,7 +1282,6 @@ function keyPressed()
   {
     frana();
   }
-
 }
 
 function frana()
