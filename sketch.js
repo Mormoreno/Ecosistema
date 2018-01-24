@@ -408,12 +408,13 @@ if(mobile)
 {
   if(touches.length==1)
   {
-    var temperaturaWanted=map(touches[0].y,0,height,-50,50);
-    temperaturaWanted=constrain(-50,50);
-    var temp=lerp(temperaturaMeter,temperaturaWanted,1*deltaTime);
+    var temperaturaWanted=map(touches[0].y,0,height,50,-50);
+    temp=lerp(temperaturaMeter,temperaturaWanted,1*deltaTime);
+    console.log(temp);
     cambiaTemperatura(temp);
   }
 }
+
 
 //SFUMATURA
 
