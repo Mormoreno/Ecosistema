@@ -466,7 +466,7 @@ else
   acquaMeter-=deltaTime*velocitaAcquaScende*modificatoreTemperatura;
 }
 
-acquaMeter=(mouseX/width)*100+10;
+//acquaMeter=(mouseX/width)*100+10;
 acquaMeter=constrain(acquaMeter, 0,100);
 var scalaAcqua=dimensioneNormalizzata(0.46);
 var scalaAcquaY=0.824*scalaAcqua;
