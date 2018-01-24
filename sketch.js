@@ -115,7 +115,7 @@ var shakeAttivo=false;
 var shakeFranato=false;
 var spriteFrana=Array();
 var franaObj;
-var thresholdShake=60;
+var thresholdShake=80;
 
 //FUMETTI
 var spriteNuvolettaFumetto;
@@ -236,6 +236,8 @@ function setup() {
    desktop=false;
 
    sogliaSuonoUdibile=0.2;
+   setShakeThreshold(thresholdShake);
+
  }
 
     createCanvas(windowWidth,windowHeight);
@@ -330,7 +332,6 @@ function setup() {
     neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true,"neve");
     neveObj.setPlay(false);
 
-    setShakeThreshold(thresholdShake);
     
     
   }
