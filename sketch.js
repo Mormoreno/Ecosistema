@@ -115,7 +115,7 @@ var shakeAttivo=false;
 var shakeFranato=false;
 var spriteFrana=Array();
 var franaObj;
-var thresholdShake=80;
+var thresholdShake=100;
 
 //FUMETTI
 var spriteNuvolettaFumetto;
@@ -229,7 +229,7 @@ function preload()
 
 function setup() {
 
- if(deviceOrientation=="LANDSCAPE" || deviceOrientation=="PORTRAIT")
+ if(deviceOrientation!="undefined")
  {
    myLog("Mobile");
    mobile=true;
