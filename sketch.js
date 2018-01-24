@@ -403,6 +403,17 @@ image(spriteLuna,xNormalizzata(.8),yNormalizzata(.1+posizioneLuna*.8),dimensione
 //Microfono
 prendiVolumeMicrofono();
 
+//Temperatura
+if(mobile)
+{
+  if(touches.length==1)
+  {
+    var temperaturaWanted=map(touches[0].y,0,height,-50,50);
+    temperaturaWanted=constrain(-50,50);
+    var temp=lerp(temperaturaMeter,temperaturaWanted,1*deltaTime);
+    cambiaTemperatura(temp);
+  }
+}
 
 //SFUMATURA
 
@@ -1313,39 +1324,48 @@ function frana()
   shakeFranato=true;
 }
 
+function cambiaTemperatura(temp)
+{
+  if(!mobile)
+  temperaturaMeter-=temp*modificatoreCambioTemperatura;
+  else
+  temperaturaMeter=temp;
+  temperaturaMeter=constrain(temperaturaMeter,-50,50);
+ 
+  if(temperaturaMeter<-40)
+  livelloGhiaccio=4;
+  else
+   if(temperaturaMeter<-30)
+   livelloGhiaccio=3;
+   else
+   if(temperaturaMeter<-15)
+   livelloGhiaccio=2;
+   else
+   if(temperaturaMeter<0)
+   livelloGhiaccio=1;
+   else
+   livelloGhiaccio=0;
+ 
+   if(temperaturaMeter<0 && isRaining)
+   {
+     isRaining=false;
+     isSnowing=true;
+   }
+   if(temperaturaMeter>0 && isSnowing)
+   {
+     isRaining=true;
+     isSnowing=false;
+   }
+ 
+   pioggiaObj.setPlay(isRaining);
+       neveObj.setPlay(isSnowing);
+}
+
 function mouseWheel(event)
 {
 
-  temperaturaMeter-=event.delta*modificatoreCambioTemperatura;
- temperaturaMeter=constrain(temperaturaMeter,-50,50);
-
- if(temperaturaMeter<-40)
- livelloGhiaccio=4;
- else
-  if(temperaturaMeter<-30)
-  livelloGhiaccio=3;
-  else
-  if(temperaturaMeter<-15)
-  livelloGhiaccio=2;
-  else
-  if(temperaturaMeter<0)
-  livelloGhiaccio=1;
-  else
-  livelloGhiaccio=0;
-
-  if(temperaturaMeter<0 && isRaining)
-  {
-    isRaining=false;
-    isSnowing=true;
-  }
-  if(temperaturaMeter>0 && isSnowing)
-  {
-    isRaining=true;
-    isSnowing=false;
-  }
-
-  pioggiaObj.setPlay(isRaining);
-      neveObj.setPlay(isSnowing);
+  if(!mobile)
+  cambiaTemperatura(event.delta);
 
 
 }
