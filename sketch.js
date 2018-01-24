@@ -115,6 +115,7 @@ var shakeAttivo=false;
 var shakeFranato=false;
 var spriteFrana=Array();
 var franaObj;
+var thresholdShake=60;
 
 //FUMETTI
 var spriteNuvolettaFumetto;
@@ -318,6 +319,8 @@ function setup() {
 
     neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true,"neve");
     neveObj.setPlay(false);
+
+    setShakeThreshold(thresholdShake);
     
     
   }
@@ -348,7 +351,7 @@ push();
 //Terremoto
 if(shakeMeter>0)
   {
-  translate(random()*shakePotenza*shakeMeter, random()*shakePotenza*shakeMeter);
+  translate(random(-1.0,1.0)*shakePotenza*shakeMeter, random(-1.0,1.0)*shakePotenza*shakeMeter);
   shakeMeter-=deltaTime*shakeMeterVelocitaPerTornareAZero;
   }
   else
