@@ -57,7 +57,7 @@ var modificatoreCambioTemperatura=0.15;
 
 //VENTO
 var microfono;
-var sogliaSuonoUdibile=0.5;
+var sogliaSuonoUdibile=0.4;
 var tempoTraSoffi=1;
 var timerSoffi=0.0;
 var volumeMicrofono=0;
@@ -228,6 +228,16 @@ function preload()
 }
 
 function setup() {
+
+ if(deviceOrientation=="LANDSCAPE" || deviceOrientation=="PORTRAIT")
+ {
+   myLog("Mobile");
+   mobile=true;
+   desktop=false;
+
+   sogliaSuonoUdibile=0.2;
+ }
+
     createCanvas(windowWidth,windowHeight);
     setDimensioneMinore();
     imageMode(CENTER);
@@ -1290,6 +1300,7 @@ function terremoto()
 function frana()
 {
   myLog("Frana");
+  suonoFrana.setVolume(0.7);
   suonoFrana.play();
   franaObj=new Animazione(spriteFrana,0.5,0.5,1,1,1,false,"frana");
   for(var i=0;i<creature.length;i++)
@@ -1459,7 +1470,6 @@ function gestisciSuoni()
 
   var volumeSuonoNotte=map(orologioMeter,0,50,1,0);
   volumeSuonoNotte=constrain(volumeSuonoNotte,0,1);
-  myLog(volumeSuonoNotte);
   suonoNotte.setVolume(volumeSuonoNotte);
 
   var volumeSuonoGiorno=map(orologioMeter,50,100,0,1);
