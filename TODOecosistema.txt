@@ -1,12 +1,17 @@
 
-Temperatura
-animali
 giorno notte influenza animali
-Nuvole
-
 piante e giorno/notte
-pioggia tint()
-SUONI
+FRANA
+
+performance pioggia?
+MOBILE?
+
+Stelle? ellipse(radius fill);
+
+Fumetti
+
+
+sprite sole nuova in tif?
 
 
 PROBLEMI
@@ -29,3 +34,4 @@ PROBLEMI
 
 DOMANDE:
 chi ha bisogno del giorno/notte? Cosa succede se non si rispetta il ciclo?
+se c'è sempre notte il fumetto rappresenta il sole o la notte?

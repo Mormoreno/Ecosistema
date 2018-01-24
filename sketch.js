@@ -73,6 +73,8 @@ var pioggiaObj;
 var spriteNeve=Array();
 var neveObj;
 
+var lerpPioggia=0;
+
 
  
 
@@ -108,9 +110,11 @@ var shakeMeter=0;
 var shakeMeterVelocitaPerTornareAZero=4;
 var shakeMeterSogliaMassima=10;
 var shakeIncremento=1;
-var shakePotenza=10 ;
+var shakePotenza=7 ;
 var shakeAttivo=false;
 var shakeFranato=false;
+var spriteFrana=Array();
+var franaObj;
 
 //FUMETTI
 var spriteNuvolettaFumetto;
@@ -123,6 +127,8 @@ var suonoNotte;
 var suonoGiorno;
 var suonoPioggia;
 var suonoFrana;
+var suonoTerremoto;
+var suonoVento;
 
 var dimensioneMinoreLato;
 var dimensioneMinore;
@@ -168,6 +174,9 @@ function preload()
 
     }
 
+  for(var i=0;i<=63;i++)
+  spriteFrana.push(loadImage("assets/Frana/Frana_"+i+".png"));
+
   for(var i=0;i<=9;i++)
   spritePioggia.push(loadImage("assets/Pioggia/Pioggia_"+i+".png"));
 
@@ -198,14 +207,18 @@ function preload()
   for(var i=0;i<=3;i++)
   spriteAlberi.push(loadImage("assets/Albero_"+i+".png"));
 
-  spriteNuvole.push(loadImage("assets/Luna.png"));
+  spriteNuvole.push(loadImage("assets/Nuvola.png"));
 
 
   //SUONI
   suonoPop=loadSound("assets/Suoni/Pop.wav");
   suonoPop.setVolume(0.03);
   suonoNotte=loadSound("assets/Suoni/SuonoNotte.mp3");
-  
+  suonoGiorno=loadSound("assets/Suoni/SuonoGiorno.mp3");
+  suonoPioggia=loadSound("assets/Suoni/Pioggia.wav");
+  suonoVento=loadSound("assets/Suoni/Vento.wav");
+  suonoFrana=loadSound("assets/Suoni/Frana.wav");
+  suonoTerremoto=loadSound("assets/Suoni/Terremoto.wav");
 
   
 
@@ -266,7 +279,7 @@ function setup() {
 
     for (var i = 0; i < listaPosizioni.posizioniNuvole.length; i++) {
       var datiJSON=listaPosizioni.posizioniNuvole[i];
-    nuvole.push(new Nuvola(datiJSON.x1,datiJSON.y1,datiJSON.x2,datiJSON.y2,datiJSON.x3,datiJSON.y3));
+    nuvole.push(new Nuvola(datiJSON.x,datiJSON.y));
     }
    
  
@@ -296,11 +309,14 @@ function setup() {
 
     //SUONI
     suonoNotte.setLoop(true);
+    suonoGiorno.setLoop(true);
+    suonoPioggia.setLoop(true);
+    suonoTerremoto.setVolume(0.5);
 
-    pioggiaObj=new Animazione(spritePioggia,0.5,0.5,1,1,.5,true);
+    pioggiaObj=new Animazione(spritePioggia,0.5,0.5,1,1,.5,true,"pioggia");
     pioggiaObj.setPlay(false);
 
-    neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true);
+    neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true,"neve");
     neveObj.setPlay(false);
     
     
@@ -386,15 +402,37 @@ image(spriteTerra,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensio
 
 
 //Montagna
+if(!shakeFranato)
 image(spriteMontagna,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
+else
+image(spriteFrana[spriteFrana.length-1],xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
 
 //Acqua
+
+if(isRaining || isSnowing)
+{
+lerpPioggia+=deltaTime;
+}
+if(!isRaining && !isSnowing)
+{
+lerpPioggia-=deltaTime;
+}
+
+lerpPioggia=constrain(lerpPioggia,0,1);
+
+suonoPioggia.setVolume(lerpPioggia);
+
 if(isRaining)
 {
   acquaMeter+=deltaTime*velocitaAcquaSale;
+  if(!suonoPioggia.isPlaying())
+  suonoPioggia.play();
 }
 else
 {
+  if(lerpPioggia<=0 || isSnowing)
+  suonoPioggia.pause();
+
   var modificatoreTemperatura=1;
   if(temperaturaMeter>25)
   modificatoreTemperatura=map(temperaturaMeter,25,50,0,10);
@@ -452,7 +490,9 @@ if(acquaMeter<soglieAcqua[0])
 
  
 
-
+  for(var i=0;i<animazioniInCorso.length;i++)
+  if(animazioniInCorso[i].tipoAnimazione=="frana" )
+  animazioniInCorso[i].update();
 
   //CREATURE
   volpiVive=0;
@@ -477,6 +517,7 @@ if(acquaMeter<soglieAcqua[0])
  
 
   for(var i=0;i<animazioniInCorso.length;i++)
+  if(animazioniInCorso[i].tipoAnimazione=="default" || animazioniInCorso[i].tipoAnimazione=="pioggia" || animazioniInCorso[i].tipoAnimazione=="neve")
   animazioniInCorso[i].update();
 
   for(var i=0;i<nuvole.length;i++)
@@ -503,6 +544,9 @@ if(debug)
 
     var mouseXnormalizzata=(mouseX-((width-dimensioneMinore)/2))/dimensioneMinore;
     var mouseYnormalizzata=(mouseY-((height-dimensioneMinore)/2))/dimensioneMinore;
+
+    //image(this.spriteNuvole[0],xNormalizzata(mouseXnormalizzata),yNormalizzata(mouseYnormalizzata),dimensioneNormalizzata(.1),dimensioneNormalizzata(.1));
+
     text("X="+mouseXnormalizzata.toFixed(2)+" Y="+mouseYnormalizzata.toFixed(2), mouseX, mouseY);
 
     var interlinea=10;
@@ -1026,14 +1070,16 @@ function Creatura(tipoCreatura,x,y,habitat)
 }
 
 
-function Nuvola(x1,y1,x2,y2,x3,y3)
+function Nuvola(x,y)
 {
-  this.x1=x1;
-  this.x2=x2;
-  this.x3=x3;
-  this.y1=y1;
-  this.y2=y2;
-  this.y3=y3;
+  this.x2=x;
+  this.y2=y;
+
+
+  this.x1=this.x2+.5;
+  this.y1=this.y2+.5;
+  this.x3=this.x2-.5;
+  this.y3=this.y2-.5;
 
   this.x=this.x1;
   this.y=this.y1;
@@ -1046,11 +1092,11 @@ function Nuvola(x1,y1,x2,y2,x3,y3)
 
 
 
-  this.size=0.1;
+  this.size=0.1+random(-0.02,0.02);
   this.actualSize=0.001;
   this.targetSize=this.actualSize;
 
-  this.velocitaLerp=3;
+  this.velocitaLerp=3+random(-0.5,0.5);
 
   this.spriteNuvola=random(spriteNuvole);
 
@@ -1093,9 +1139,10 @@ function Nuvola(x1,y1,x2,y2,x3,y3)
 }
 
 
-function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
+function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,tipoAnimazione="default")
 {
   animazioniInCorso.push(this);
+  this.tipoAnimazione=tipoAnimazione;
   this.loop=loop;
   this.arrayFotogrammi=arrayFotogrammi;
   this.x=x;
@@ -1104,7 +1151,6 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
   this.sizeY=sizeY;
   this.durata=durata;
   this.velocita=durata/arrayFotogrammi.length;
-  this.zIndex=zIndex;
   this.pausa=false;
   this.play=true;
   
@@ -1145,7 +1191,18 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,zIndex=0)
 
     push();
     if(!this.animazioneFinita)
-    image(this.arrayFotogrammi[this.indiceSprite], xNormalizzata(this.x), yNormalizzata(this.y), dimensioneNormalizzata(this.sizeX), dimensioneNormalizzata(this.sizeY*this.ratio));
+    {
+      if(this.tipoAnimazione=="pioggia" || this.tipoAnimazione=="neve")
+      {
+       
+        if(lerpPioggia<=0 && this.play)
+        this.setPlay(false);
+        if(lerpPioggia<=0 || lerpPioggia!=1)
+        tint(255,lerpPioggia*255);
+
+      }
+      image(this.arrayFotogrammi[this.indiceSprite], xNormalizzata(this.x), yNormalizzata(this.y), dimensioneNormalizzata(this.sizeX), dimensioneNormalizzata(this.sizeY*this.ratio));
+    }
     pop();
   }
 
@@ -1207,6 +1264,9 @@ function setDimensioneMinore()
 function keyPressed()
 {
 
+
+  suonoTerremoto.rate(1+random(-.1,.1));
+  suonoTerremoto.play();
   if(shakeMeter<shakeMeterSogliaMassima)
   shakeMeter+=shakeIncremento;
   else if(!shakeFranato)
@@ -1219,6 +1279,8 @@ function keyPressed()
 function frana()
 {
   myLog("Frana");
+  suonoFrana.play();
+  franaObj=new Animazione(spriteFrana,0.5,0.5,1,1,1,false,"frana");
   for(var i=0;i<creature.length;i++)
   {
     if(creature[i].tipoCreatura=="albero" && creature[i].habitat=="montagna")
@@ -1346,6 +1408,10 @@ function prendiVolumeMicrofono()
         case 2:for(var i=1;i<nuvole.length;i+=2)
               {
                 nuvole[i].entra();
+                if(isRaining)
+                pioggiaObj.setPlay(true);
+                if(isSnowing)
+                neveObj.setPlay(true);
               }
               break;
 
@@ -1358,10 +1424,9 @@ function prendiVolumeMicrofono()
 
       }
 
-      pioggiaObj.setPlay(isRaining);
-      neveObj.setPlay(isSnowing);
 
-      
+
+      suonoVento.play();
 
       myLog("soffiato");
     }
@@ -1383,7 +1448,12 @@ function gestisciSuoni()
 
   var volumeSuonoNotte=map(orologioMeter,0,50,1,0);
   volumeSuonoNotte=constrain(volumeSuonoNotte,0,1);
+  myLog(volumeSuonoNotte);
   suonoNotte.setVolume(volumeSuonoNotte);
+
+  var volumeSuonoGiorno=map(orologioMeter,50,100,0,1);
+  volumeSuonoGiorno=constrain(volumeSuonoGiorno,0,1);
+  suonoGiorno.setVolume(volumeSuonoGiorno);
 
   if(!isGiorno)
   {
@@ -1391,6 +1461,14 @@ function gestisciSuoni()
     {
       
       suonoNotte.play();
+    }
+  }
+  else
+  {
+    if(!suonoGiorno.isPlaying())
+    {
+      
+      suonoGiorno.play();
     }
   }
 
