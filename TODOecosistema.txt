@@ -1,9 +1,7 @@
 
-giorno notte influenza animali
-piante e giorno/notte
-FRANA
-
-performance pioggia?
+piante muoiono dopo tot notte
+piante che nascono solo dopo tot giorno
+volpi muoiono dopo tot notte (dopo le piante)
 
 Fumetti
 
