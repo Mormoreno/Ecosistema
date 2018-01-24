@@ -93,6 +93,8 @@ var coloreNotte;
 var daQuantiSecondiDuraLaNotte=0;
 var daQuantiSecondiDuraIlGiorno=0;
 var isGiorno=false;
+var posizioniStelle=Array();
+var stelle=Array();
 
 
 //ALBERI
@@ -295,7 +297,8 @@ function setup() {
     nuvole.push(new Nuvola(datiJSON.x,datiJSON.y));
     }
    
- 
+    for(var i=0;i<100;i++)
+    posizioniStelle.push(new Posizione(random(),random()));
 
 
     //Performance optimization
@@ -326,10 +329,10 @@ function setup() {
     suonoPioggia.setLoop(true);
     suonoTerremoto.setVolume(0.5);
 
-    pioggiaObj=new Animazione(spritePioggia,0.5,0.5,1,1,.5,true,"pioggia");
+    pioggiaObj=new Animazione(spritePioggia,0.49,0.44,.65,.65,.5,true,"pioggia");
     pioggiaObj.setPlay(false);
 
-    neveObj=new Animazione(spriteNeve,0.5,0.5,1,1,1,true,"neve");
+    neveObj=new Animazione(spriteNeve,0.49,0.44,.65,.65,1,true,"neve");
     neveObj.setPlay(false);
 
     
@@ -396,6 +399,17 @@ else
 
 var posizioneSole=(100-orologioMeter)/100;
 var posizioneLuna=(orologioMeter)/100;
+
+//STELLE
+if(!isGiorno)
+{
+  push();
+  fill(255,255*(posizioneSole-.5));
+  noStroke();
+  for(var i=0;i<posizioniStelle.length;i++)
+  ellipse(xNormalizzata(posizioniStelle[i].x), yNormalizzata(posizioniStelle[i].y), dimensioneNormalizzata( random(0.7,1.0)*0.005));
+  pop();
+}
 
 image(spriteSole,xNormalizzata(.2),yNormalizzata(.1+posizioneSole*.8),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
 image(spriteLuna,xNormalizzata(.8),yNormalizzata(.1+posizioneLuna*.8),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
@@ -557,7 +571,7 @@ if(acquaMeter<soglieAcqua[0])
 
 
 //image(spriteBoundingBox, width/2,height/2,dimensioneMinore,dimensioneMinore);
-
+//image(spritePioggia[1],xNormalizzata(.49),yNormalizzata(.44),dimensioneNormalizzata(.65),dimensioneNormalizzata(.65));
 //FINE
 pop();
 

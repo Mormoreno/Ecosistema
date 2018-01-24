@@ -4,9 +4,6 @@ piante e giorno/notte
 FRANA
 
 performance pioggia?
-MOBILE?
-
-Stelle? ellipse(radius fill);
 
 Fumetti
 
