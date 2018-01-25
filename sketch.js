@@ -57,7 +57,7 @@ var modificatoreCambioTemperatura=0.15;
 
 //VENTO
 var microfono;
-var sogliaSuonoUdibile=0.4;
+var sogliaSuonoUdibile=0.3;
 var tempoTraSoffi=1;
 var timerSoffi=0.0;
 var volumeMicrofono=0;
@@ -230,7 +230,7 @@ function setup() {
    mobile=true;
    desktop=false;
 
-   sogliaSuonoUdibile=0.2;
+   sogliaSuonoUdibile=0.13;
    setShakeThreshold(thresholdShake);
 
  }
