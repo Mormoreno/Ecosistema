@@ -45,6 +45,34 @@
 
                 {
                     "tipoCreatura":"albero",
+                    "x":0.41,
+                    "y":0.50,
+                    "habitat":"spiaggiaSoleggiata"
+                },
+                
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.48,
+                    "y":0.52,
+                    "habitat":"spiaggiaSoleggiata"
+                },
+                
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.59,
+                    "y":0.61,
+                    "habitat":"spiaggiaSoleggiata"
+                },
+                
+                {
+                    "tipoCreatura":"albero",
+                    "x":0.53,
+                    "y":0.51,
+                    "habitat":"spiaggiaSoleggiata"
+                },
+
+                {
+                    "tipoCreatura":"albero",
                     "x":0.67,
                     "y":0.44,
                     "habitat":"montagna"

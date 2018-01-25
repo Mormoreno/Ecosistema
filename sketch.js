@@ -4,7 +4,7 @@ p5.disableFriendlyErrors = true;
 var mobile=false;
 var desktop=true;
 
-var debug=true;
+var debug=false;
 var lowRes=false;
 var targetFrameRate=60;
 
@@ -140,8 +140,6 @@ var animazioniInCorso=Array();
 var spriteEsplosione=Array();
 var spriteSfumatura;
 
-var animazioneProva;
-var velocitaAnimazioneProva=10;
 
 var inizializzato=false;
 var timerInizializzato=0;
@@ -186,11 +184,6 @@ function preload()
   for(var i=0;i<=9;i++)
   spriteNeve.push(loadImage("assets/Neve/Neve_"+i+".png"));
 
-  for(var i=0;i<=3;i++)
-  spriteGhiaccio.push(loadImage("assets/Ghiaccio_"+i+".png"));
-
-  for(var i=0;i<=4;i++)
-  spriteAnimazioneProva.push(loadImage("assets/AnimazioneProva_"+i+".png"));
 
   for(var i=0;i<=4;i++)
   spriteEsplosione.push(loadImage("assets/Esplosione/Animazione_Esplosione_"+i+".png"));
@@ -198,13 +191,13 @@ function preload()
   for(var i=0;i<=6;i++)
   spritePittogrammi.push(loadImage("assets/Pittogrammi/Pittogramma_"+i+".png"));
 
-  for(var i=0;i<=1;i++)
+  for(var i=0;i<=3;i++)
   spriteVolpe.push(loadImage("assets/Animali_Volpe_"+i+".png"));
 
-  for(var i=0;i<=2;i++)
+  for(var i=0;i<=4;i++)
   spriteLontra.push(loadImage("assets/Animali_Lontra_"+i+".png"));
 
-  for(var i=0;i<=1;i++)
+  for(var i=0;i<=3;i++)
   spritePesce.push(loadImage("assets/Animali_Pesce_"+i+".png"));
 
   for(var i=0;i<=3;i++)
@@ -423,7 +416,7 @@ if(mobile)
   if(touches.length==1)
   {
     var temperaturaWanted=map(touches[0].y,0,height,50,-50);
-    temp=lerp(temperaturaMeter,temperaturaWanted,1*deltaTime);
+    temp=lerp(temperaturaMeter,temperaturaWanted,6*deltaTime);
     console.log(temp);
     cambiaTemperatura(temp);
   }
@@ -442,10 +435,10 @@ image(spriteTerra,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensio
 
 
 //Montagna
-if(!shakeFranato)
+//if(!shakeFranato)
 image(spriteMontagna,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
-else
-image(spriteFrana[spriteFrana.length-1],xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
+//else
+//image(spriteFrana[spriteFrana.length-1],xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
 
 //Acqua
 
@@ -789,12 +782,20 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.tolleranzaGiorno=60;
   this.tolleranzaNotte=60;
 
+  this.natoMorto=false;
+  this.morto=false;
+
 
   switch(tipoCreatura)
   {
     case "albero":
                   this.size=0.08;
                   this.spriteCreatura=random(spriteAlberi);
+                  this.tolleranzaNotte=60;
+                  if(this.habitat=="spiaggiaSoleggiata")
+                  {
+                   this.natoMorto=true;
+                  }
                   
     break;
 
@@ -802,6 +803,7 @@ function Creatura(tipoCreatura,x,y,habitat)
                 this.size=0.04;
                 this.spriteCreatura=random(spriteVolpe);
                 this.velocitaCrescita=0.005;
+                this.tolleranzaNotte=90;
     break;
 
     case "lontra":
@@ -850,9 +852,16 @@ function Creatura(tipoCreatura,x,y,habitat)
 
                 
   }
+  
   this.actualSize=this.size;
+  if(this.natoMorto)
+  {
+    this.morto=true;
+    this.actualSize=0;
+  }
+
   this.ratio=this.spriteCreatura.height/this.spriteCreatura.width;
-  this.morto=false;
+ 
   this.isGrowning=false;
   this.canTalk=true;
 
@@ -865,16 +874,40 @@ function Creatura(tipoCreatura,x,y,habitat)
     //ALBERI===================================
     if(this.tipoCreatura=="albero")
     {
-      if(this.habitat=="spiaggia")
+      if(this.habitat=="spiaggia" || this.habitat=="spiaggiaSoleggiata")
       {
         if(acquaMeter>90)
-        this.muori();
-        else if(acquaMeter>70)
+        this.dovrebbeMorire=true;
+        else if(acquaMeter>80)
         this.fumetto("morte");
         else
-        this.nasci();
+        {
+          if(this.habitat=="spiaggia")
+          this.dovrebbeNascere=true;
+          else
+          {
+            if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
+            this.dovrebbeNascere=true;
+          }
+        }
 
       }
+      else
+      if(this.habitat=="montagna")
+      {
+        if(!shakeFranato)
+        this.dovrebbeNascere=true;
+      }
+
+
+      if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte-10)
+      this.fumetto("notte");
+
+      if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
+      this.dovrebbeMorire=true;
+
+      if(this.habitat=="montagna" && shakeFranato)
+      this.dovrebbeMorire=true;
 
       if(acquaMeter<soglieAcqua[0])
       {
@@ -887,7 +920,7 @@ function Creatura(tipoCreatura,x,y,habitat)
     {
       if(shakeFranato && this.indiceCreatura%2==0)
       {
-        this.muori();
+        this.dovrebbeMorire=true;
       }
       else
       {
@@ -902,41 +935,43 @@ function Creatura(tipoCreatura,x,y,habitat)
         {
           if(this.habitat!="mareLivello3")
           {
-            this.muori();
+            this.dovrebbeMorire=true;
           }
           else
-          this.nasci();
+          this.dovrebbeNascere=true;
         }
         else
         if(livelloAcqua==3)
         {
-          this.nasci();
+          this.dovrebbeNascere=true;
         }
         else
         if(livelloAcqua==2)
         {
           if(this.habitat=="mareLivello3")
-          this.muori();
+          this.dovrebbeMorire=true;
           else
-          this.nasci();
+          this.dovrebbeNascere=true;
         }
         if(livelloAcqua==1)
         {
           if(this.habitat=="mareLivello2" || this.habitat=="mareLivello3")
-          this.muori();
+          this.dovrebbeMorire=true;
           else
-          this.nasci();
+          this.dovrebbeNascere=true;
         }
         if(livelloAcqua==0)
         {
           if(this.habitat=="mareLivello1" || this.habitat=="mareLivello2" || this.habitat=="mareLivello3")
-          this.muori();
+          this.dovrebbeMorire=true;
           else
-          this.nasci();
+          this.dovrebbeNascere=true;
         }
 
-        if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
+        if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte-10)
         this.fumetto("notte");
+        if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
+        this.dovrebbeMorire=true;
         if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
         this.fumetto("giorno");
       }
@@ -1243,6 +1278,12 @@ function Animazione(arrayFotogrammi,x,y,sizeX,sizeY,durata,loop=true,tipoAnimazi
       }
       image(this.arrayFotogrammi[this.indiceSprite], xNormalizzata(this.x), yNormalizzata(this.y), dimensioneNormalizzata(this.sizeX), dimensioneNormalizzata(this.sizeY*this.ratio));
     }
+    else
+    {
+      if(this.tipoAnimazione=="frana")
+      image(this.arrayFotogrammi[this.arrayFotogrammi.length-1], xNormalizzata(this.x), yNormalizzata(this.y), dimensioneNormalizzata(this.sizeX), dimensioneNormalizzata(this.sizeY*this.ratio));
+
+    }
     pop();
   }
 
@@ -1329,13 +1370,8 @@ function frana()
   myLog("Frana");
   suonoFrana.setVolume(0.7);
   suonoFrana.play();
-  franaObj=new Animazione(spriteFrana,0.5,0.5,1,1,1,false,"frana");
-  for(var i=0;i<creature.length;i++)
-  {
-    if(creature[i].tipoCreatura=="albero" && creature[i].habitat=="montagna")
-    creature[i].muori();
-  }
-
+  franaObj=new Animazione(spriteFrana,0.5,0.5,1,1,2,false,"frana");
+  shakeMeter=5;
   shakeFranato=true;
 }
 
