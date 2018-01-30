@@ -4,7 +4,7 @@ p5.disableFriendlyErrors = true;
 var mobile=false;
 var desktop=true;
 
-var debug=false;
+var debug=true;
 var lowRes=false;
 var targetFrameRate=60;
 
@@ -36,15 +36,12 @@ var spritePesce=Array();
 
 var volpiCreate=0;
 var volpiVive=0;
-var volpiTarget=4;
 
 var lontreCreate=0;
 var lontreVive=0;
-var lontreTarget=4;
 
 var pesciCreati=0;
 var pesciVivi=0;
-var pesciTarget=4;
 
 
 
@@ -53,11 +50,12 @@ var temperaturaMeter=25;
 var indicatoriTemperatura=Array();
 var spriteIndicatoreFreddo;
 var spriteIndicatoreCaldo;
-var modificatoreCambioTemperatura=0.15;
+var modificatoreCambioTemperatura=0.06;
+var oldYtocco=0;
 
 //VENTO
 var microfono;
-var sogliaSuonoUdibile=0.3;
+var sogliaSuonoUdibile=0.1;
 var tempoTraSoffi=1;
 var timerSoffi=0.0;
 var volumeMicrofono=0;
@@ -110,7 +108,7 @@ var creature=Array();
 //TERREMOTO
 var shakeMeter=0;
 var shakeMeterVelocitaPerTornareAZero=4;
-var shakeMeterSogliaMassima=10;
+var shakeMeterSogliaMassima=7;
 var shakeIncremento=1;
 var shakePotenza=7 ;
 var shakeAttivo=false;
@@ -216,8 +214,6 @@ function preload()
   suonoFrana=loadSound("assets/Suoni/Frana.wav");
   suonoTerremoto=loadSound("assets/Suoni/Terremoto.wav");
 
-  
-
   spriteSfumatura=(loadImage("assets/Sfumatura.png"));
 
 }
@@ -231,6 +227,7 @@ function setup() {
    desktop=false;
 
    sogliaSuonoUdibile=0.13;
+   modificatoreCambioTemperatura=.5;
    setShakeThreshold(thresholdShake);
 
  }
@@ -390,8 +387,8 @@ else
 }
 
 
-var posizioneSole=(100-orologioMeter)/100;
-var posizioneLuna=(orologioMeter)/100;
+var posizioneSole=constrain((100-orologioMeter)/100,0,100);
+var posizioneLuna=constrain((orologioMeter)/100,0,100);
 
 //STELLE
 if(!isGiorno)
@@ -404,8 +401,8 @@ if(!isGiorno)
   pop();
 }
 
-image(spriteSole,xNormalizzata(.2),yNormalizzata(.1+posizioneSole*.8),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
-image(spriteLuna,xNormalizzata(.8),yNormalizzata(.1+posizioneLuna*.8),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
+image(spriteSole,xNormalizzata(.2),yNormalizzata(.2 +posizioneSole*.7),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
+image(spriteLuna,xNormalizzata(.8),yNormalizzata(.2+posizioneLuna*.7),dimensioneNormalizzata(0.1),dimensioneNormalizzata(0.1));
 
 //Microfono
 prendiVolumeMicrofono();
@@ -415,10 +412,14 @@ if(mobile)
 {
   if(touches.length==1)
   {
-    var temperaturaWanted=map(touches[0].y,0,height,50,-50);
+    
+
+    var deltaTocco=touches[0].y-oldYtocco;
+    /*var temperaturaWanted=map(touches[0].y,0,height,50,-50);
     temp=lerp(temperaturaMeter,temperaturaWanted,6*deltaTime);
-    console.log(temp);
-    cambiaTemperatura(temp);
+    console.log(temp);*/
+    cambiaTemperatura(deltaTocco*modificatoreCambioTemperatura);
+    oldYtocco=touches[0].y;
   }
 }
 
@@ -435,10 +436,8 @@ image(spriteTerra,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensio
 
 
 //Montagna
-//if(!shakeFranato)
 image(spriteMontagna,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
-//else
-//image(spriteFrana[spriteFrana.length-1],xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
+
 
 //Acqua
 
@@ -470,7 +469,13 @@ else
   if(temperaturaMeter>25)
   modificatoreTemperatura=map(temperaturaMeter,25,50,0,10);
 
+  if(!isSnowing)
   acquaMeter-=deltaTime*velocitaAcquaScende*modificatoreTemperatura;
+  else
+  {
+    if(acquaMeter<soglieAcqua[1])
+    acquaMeter+=deltaTime*velocitaAcquaSale;
+  }
 }
 
 //acquaMeter=(mouseX/width)*100+10;
@@ -681,7 +686,7 @@ function NuvolettaFumetto(x,y,tipoFumetto,owner)
   this.spritePittogramma=spritePittogrammi[0];
   this.tempoPrimaDiPoterRiparlare=3;
 
-  this.maxSize=dimensioneNormalizzata(0.03);
+  this.maxSize=dimensioneNormalizzata(0.05);
   this.maxSizePittogramma=this.maxSize*.38;
 
   this.altezza=0.045;
@@ -782,6 +787,9 @@ function Creatura(tipoCreatura,x,y,habitat)
   this.tolleranzaGiorno=60;
   this.tolleranzaNotte=60;
 
+  this.tolleranzaSete=45;
+  this.timerSete=0;
+
   this.natoMorto=false;
   this.morto=false;
 
@@ -879,7 +887,7 @@ function Creatura(tipoCreatura,x,y,habitat)
         if(acquaMeter>90)
         this.dovrebbeMorire=true;
         else if(acquaMeter>80)
-        this.fumetto("morte");
+        this.fumetto("spavento");
         else
         {
           if(this.habitat=="spiaggia")
@@ -912,6 +920,9 @@ function Creatura(tipoCreatura,x,y,habitat)
       if(acquaMeter<soglieAcqua[0])
       {
         this.fumetto("acqua");
+        this.timerSete+=deltaTime;
+        if(this.timerSete>this.tolleranzaSete)
+        this.dovrebbeMorire=true;
       }
     }
     else
@@ -928,7 +939,7 @@ function Creatura(tipoCreatura,x,y,habitat)
         if(frameCount%100==0)
         this.spriteCasuale(spriteVolpe);
 
-        if(shakeMeter>5)
+        if(shakeMeter>2)
         this.fumetto("spavento");
 
         if(livelloAcqua==4)
@@ -969,11 +980,11 @@ function Creatura(tipoCreatura,x,y,habitat)
         }
 
         if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte-10)
-        this.fumetto("notte");
+        this.fumetto("giorno");
         if(daQuantiSecondiDuraLaNotte>this.tolleranzaNotte)
         this.dovrebbeMorire=true;
         if(daQuantiSecondiDuraIlGiorno>this.tolleranzaGiorno)
-        this.fumetto("giorno");
+        this.fumetto("notte");
       }
     }
     else
@@ -1332,12 +1343,12 @@ function setDimensioneMinore()
 {
   if(windowHeight>windowWidth)
   {
-  dimensioneMinore=windowWidth;
+  dimensioneMinore=windowWidth*1.3;
   dimensioneMinoreLato="width";
   }
   else
   {
-    dimensioneMinore=windowHeight;
+    dimensioneMinore=windowHeight*1.3;
     dimensioneMinoreLato="height";
   }
 }
@@ -1349,6 +1360,8 @@ function deviceShaken()
 
 function keyPressed()
 {
+  //Solo spazio fa il terremoto
+  if (keyCode == 32)
  terremoto();
 
 }
@@ -1377,10 +1390,11 @@ function frana()
 
 function cambiaTemperatura(temp)
 {
-  if(!mobile)
+  //if(!mobile)
   temperaturaMeter-=temp*modificatoreCambioTemperatura;
-  else
-  temperaturaMeter=temp;
+  /*else
+  temperaturaMeter=temp;*/
+
   temperaturaMeter=constrain(temperaturaMeter,-50,50);
  
   if(temperaturaMeter<-40)
@@ -1453,7 +1467,11 @@ function prendiLuminositaWebcam()
     
   }
 
-  var luminositaWebcamTemp=sommaLuminosita/numeroSample;
+  var luminositaWebcamTemp=(sommaLuminosita/numeroSample);
+  
+  //Facciamo tendere più al giorno
+  luminositaWebcamTemp*=1.1;
+  luminositaWebcamTemp=constrain(luminositaWebcamTemp,0,100);
 
   //per evitare fluttuazioni
   if(abs(luminositaWebcamOldFrame-luminositaWebcamTemp)>=sogliaSensoreLuminosita)
@@ -1565,6 +1583,14 @@ function gestisciSuoni()
     }
   }
 
+}
+
+function touchStarted()
+{
+  if(touches.length==1)
+  {
+    oldYtocco=touches[0].y;
+  }
 }
 
 function myLog(object)
