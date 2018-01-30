@@ -36,15 +36,12 @@ var spritePesce=Array();
 
 var volpiCreate=0;
 var volpiVive=0;
-var volpiTarget=4;
 
 var lontreCreate=0;
 var lontreVive=0;
-var lontreTarget=4;
 
 var pesciCreati=0;
 var pesciVivi=0;
-var pesciTarget=4;
 
 
 
@@ -215,8 +212,6 @@ function preload()
   suonoVento=loadSound("assets/Suoni/Vento.wav");
   suonoFrana=loadSound("assets/Suoni/Frana.wav");
   suonoTerremoto=loadSound("assets/Suoni/Terremoto.wav");
-
-  
 
   spriteSfumatura=(loadImage("assets/Sfumatura.png"));
 
@@ -435,10 +430,8 @@ image(spriteTerra,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensio
 
 
 //Montagna
-//if(!shakeFranato)
 image(spriteMontagna,xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
-//else
-//image(spriteFrana[spriteFrana.length-1],xNormalizzata(.5),yNormalizzata(.5), dimensioneMinore,dimensioneMinore);
+
 
 //Acqua
 
