@@ -4,7 +4,7 @@ p5.disableFriendlyErrors = true;
 var mobile=false;
 var desktop=true;
 
-var debug=false;
+var debug=true;
 var lowRes=false;
 var targetFrameRate=60;
 
@@ -55,7 +55,7 @@ var oldYtocco=0;
 
 //VENTO
 var microfono;
-var sogliaSuonoUdibile=0.1;
+var sogliaSuonoUdibile=0.2;
 var tempoTraSoffi=1;
 var timerSoffi=0.0;
 var volumeMicrofono=0;
@@ -619,6 +619,8 @@ if(debug)
     text("Giorno= "+daQuantiSecondiDuraIlGiorno.toFixed(1),10,interlinea);
     interlinea+=20;
     text("LivelloAcqua= "+livelloAcqua,10,interlinea);
+    interlinea+=20;
+    text("SogliaSuonoUdibile= "+sogliaSuonoUdibile,10,interlinea);
     
   }
 
@@ -1363,6 +1365,10 @@ function keyPressed()
   //Solo spazio fa il terremoto
   if (keyCode == 32)
  terremoto();
+
+ //Set solia microfono
+ if(keyCode>=49 && keyCode<=57)
+ sogliaSuonoUdibile=((keyCode-48)*.05).toFixed(2);
 
 }
 
