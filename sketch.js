@@ -4,7 +4,7 @@ p5.disableFriendlyErrors = true;
 var mobile=false;
 var desktop=true;
 
-var debug=true;
+var debug=false;
 var lowRes=false;
 var targetFrameRate=60;
 
