@@ -1,5 +1,5 @@
 # Ecosystem
-[alt](https://github.com/Mormoreno/Ecosistema/Preview.png)
+![alt text](Preview.png)
 
 We wanted to create a small ecosystem with a simple food chain to represent how climate and habitat changes can affect the animal populations that thrive on that ecosystem. In fact it’s necessary to have a well balanced climate to have a healthy ecosystem, as extreme weather phenomena can disrupt the equilibrium. The user will be able to affect the climate in multiple ways, like determining the temperature or the weather. Furthermore, the user will also be capable of altering the environment by causing earthquakes or other catastrophes like floods or drought.
 
